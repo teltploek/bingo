@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import { GeistSans } from 'geist/font/sans';
 import { GeistMono } from 'geist/font/mono';
 import { Chewy } from 'next/font/google';
+import { Analytics } from '@vercel/analytics/next';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import './globals.css';
 
 // Initialize Inter font with bold weight
@@ -23,7 +25,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={christmasFont.className}>
-      <body className={`${GeistSans.variable} ${GeistMono.variable} antialiased`}>{children}</body>
+      <body className={`${GeistSans.variable} ${GeistMono.variable} antialiased`}>
+        {children}
+
+        <Analytics />
+        <SpeedInsights />
+      </body>
     </html>
   );
 }
