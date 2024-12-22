@@ -9,6 +9,68 @@ export type MediaConfig = {
   youtubeId?: string; // YouTube video ID if it's a YouTube video
 };
 
+export type IntroVideo = {
+  youtubeId: string;
+  start: number;
+  end: number;
+  description?: string;
+};
+
+export type PauseVideo = {
+  youtubeId: string;
+  start: number;
+  end: number;
+  description?: string;
+};
+
+export const pauseVideos: PauseVideo[] = [
+  {
+    youtubeId: 'Kl7v-kxN-bc',
+    start: 259,
+    end: 268,
+    description: 'Så er der bingo!',
+  },
+  {
+    youtubeId: '3_tgVpiWpxI',
+    start: 251,
+    end: 294,
+    description: 'Så er der bingo!',
+  },
+  {
+    youtubeId: 'WXyC-p07ftY',
+    start: 476,
+    end: 486,
+    description: 'Så er der bingo!',
+  },
+];
+
+export const introVideos: IntroVideo[] = [
+  {
+    youtubeId: '_hFCf0iw4iQ',
+    start: 13,
+    end: 160,
+    description: 'Kanal O TV-Bingo Show',
+  },
+  {
+    youtubeId: 'DdwmZrCE-94',
+    start: 10,
+    end: 152,
+    description: 'Kanal O TV-Bingo Show',
+  },
+  {
+    youtubeId: 'tzTEdPMGvD8',
+    start: 37,
+    end: 152,
+    description: 'Kanal O TV-Bingo Show',
+  },
+  {
+    youtubeId: 'APst0D2cQYY',
+    start: 13,
+    end: 196,
+    description: 'Kanal O TV-Bingo Show',
+  },
+];
+
 export const mediaMapping: Record<number, MediaConfig> = {
   0: {
     type: 'youtube',

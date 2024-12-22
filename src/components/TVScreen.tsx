@@ -10,6 +10,7 @@ interface TVProps {
   youtubeId?: string;
   onMediaEnd: () => void;
   isPlaying: boolean;
+  size?: 'normal' | 'large'; // New size prop
 }
 
 const TVScreen: React.FC<TVProps> = ({
@@ -20,6 +21,7 @@ const TVScreen: React.FC<TVProps> = ({
   youtubeId,
   onMediaEnd,
   isPlaying,
+  size = 'normal', // Default to normal size
 }) => {
   const [isOn, setIsOn] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -34,6 +36,9 @@ const TVScreen: React.FC<TVProps> = ({
       friction: 20,
     },
   });
+
+  // Determine height based on size prop
+  const heightClass = size === 'large' ? 'h-[640px]' : 'h-[320px]';
 
   useEffect(() => {
     setIsOn(isPlaying);
@@ -76,7 +81,13 @@ const TVScreen: React.FC<TVProps> = ({
     switch (mediaType) {
       case 'youtube':
         return youtubeId ? (
-          <YouTubePlayer videoId={youtubeId} start={videoStart} end={videoEnd} onEnd={onMediaEnd} />
+          <YouTubePlayer
+            videoId={youtubeId}
+            start={videoStart}
+            end={videoEnd}
+            onEnd={onMediaEnd}
+            size={size} // Pass size to YouTubePlayer
+          />
         ) : null;
       case 'video':
         return (
@@ -97,7 +108,7 @@ const TVScreen: React.FC<TVProps> = ({
   return (
     <animated.div
       style={springs}
-      className="relative bg-black rounded-lg overflow-hidden shadow-2xl h-[320px]"
+      className={`relative bg-black rounded-lg overflow-hidden shadow-2xl ${heightClass}`}
     >
       <div className="relative w-full h-full bg-[#333] p-4 rounded-lg">
         <div className="relative w-full h-full bg-black rounded overflow-hidden">

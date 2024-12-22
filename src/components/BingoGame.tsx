@@ -6,7 +6,14 @@ import { Card, CardContent } from '@/components/ui/card';
 import { ThemeSelector } from './ThemeSelector';
 import { themes } from '@/lib/themes';
 import dynamic from 'next/dynamic';
-import { MediaConfig, mediaMapping } from '@/lib/mediaConfig';
+import {
+  MediaConfig,
+  mediaMapping,
+  introVideos,
+  IntroVideo,
+  pauseVideos,
+  PauseVideo,
+} from '@/lib/mediaConfig';
 import { Canvas } from '@react-three/fiber';
 import NumberBall from './NumberSphere';
 import TVScreen from './TVScreen';
@@ -108,6 +115,11 @@ const BingoGame = () => {
   const [currentTheme, setCurrentTheme] = useState('christmas');
   const [showMediaOverlay, setShowMediaOverlay] = useState(false);
   const [currentMedia, setCurrentMedia] = useState<null | MediaConfig>(null);
+  const [showIntroVideo, setShowIntroVideo] = useState(false);
+  const [selectedIntroVideo, setSelectedIntroVideo] = useState<IntroVideo | null>(null);
+  const [isFreshGame, setIsFreshGame] = useState(true);
+  const [showPauseVideo, setShowPauseVideo] = useState(false);
+  const [selectedPauseVideo, setSelectedPauseVideo] = useState<PauseVideo | null>(null);
   const [isSoundEnabled, setIsSoundEnabled] = useState(false);
 
   // Derive available numbers from drawn numbers
@@ -133,10 +145,51 @@ const BingoGame = () => {
     setIsDrawing(false);
     setShowMediaOverlay(false);
     setCurrentMedia(null);
+    setIsFreshGame(true); // Set to true when initializing a new game
+    setShowIntroVideo(false); // Reset intro video state
+    setSelectedIntroVideo(null);
+  }, []);
+
+  const toggleDrawing = useCallback(() => {
+    if (isFreshGame) {
+      // If it's a fresh game, play intro video first
+      const randomIntroVideo = introVideos[Math.floor(Math.random() * introVideos.length)];
+      setSelectedIntroVideo(randomIntroVideo);
+      setShowIntroVideo(true);
+      setIsFreshGame(false);
+    } else if (isDrawing) {
+      // If we're currently drawing (i.e., pausing the game)
+      const randomPauseVideo = pauseVideos[Math.floor(Math.random() * pauseVideos.length)];
+      setSelectedPauseVideo(randomPauseVideo);
+      setShowPauseVideo(true);
+      setIsDrawing(false);
+    } else {
+      // If we're resuming after a pause
+      setIsDrawing(true);
+    }
+  }, [isFreshGame, isDrawing]);
+
+  const handleIntroVideoEnd = useCallback(() => {
+    setShowIntroVideo(false);
+    setSelectedIntroVideo(null);
+    setIsDrawing(true); // Start drawing numbers after intro ends
+  }, []);
+
+  const handlePauseVideoEnd = useCallback(() => {
+    console.log('Pause video ended');
+    setShowPauseVideo(false);
+    setSelectedPauseVideo(null);
+    // Do not set isDrawing here - let the toggleDrawing function handle that
   }, []);
 
   const drawNumber = useCallback(() => {
     // Check if we can draw
+
+    if (showIntroVideo) {
+      console.log('Intro video is playing, cannot draw');
+      return;
+    }
+
     if (availableNumbers.length === 0) {
       console.log('No available numbers to draw');
       return;
@@ -164,7 +217,7 @@ const BingoGame = () => {
       setCurrentMedia(mediaForNumber);
       setShowMediaOverlay(true);
     }
-  }, [availableNumbers, showMediaOverlay, currentMedia]);
+  }, [availableNumbers, showMediaOverlay, currentMedia, showIntroVideo]);
 
   const handleMediaEnd = useCallback(() => {
     if (currentNumber !== null) {
@@ -271,6 +324,26 @@ const BingoGame = () => {
         />
       )}
 
+      {/* Video Overlays - Move both video types here */}
+      {(showIntroVideo || showPauseVideo) && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75">
+          <div className="w-full max-w-6xl p-4">
+            <TVScreen
+              mediaUrl=""
+              mediaType="youtube"
+              youtubeId={
+                showIntroVideo ? selectedIntroVideo?.youtubeId : selectedPauseVideo?.youtubeId
+              }
+              videoStart={showIntroVideo ? selectedIntroVideo?.start : selectedPauseVideo?.start}
+              videoEnd={showIntroVideo ? selectedIntroVideo?.end : selectedPauseVideo?.end}
+              onMediaEnd={showIntroVideo ? handleIntroVideoEnd : handlePauseVideoEnd}
+              isPlaying={showIntroVideo || showPauseVideo}
+              size="large"
+            />
+          </div>
+        </div>
+      )}
+
       <div className="container mx-auto p-4 max-w-6xl relative z-10">
         <div className="grid grid-cols-2 gap-8 mb-8">
           {/* Ball Display */}
@@ -305,6 +378,7 @@ const BingoGame = () => {
               youtubeId={currentMedia?.youtubeId}
               onMediaEnd={handleMediaEnd}
               isPlaying={showMediaOverlay}
+              size="normal"
             />
           </CardContent>
         </div>
@@ -328,7 +402,7 @@ const BingoGame = () => {
               New Game
             </Button>
             <Button
-              onClick={() => setIsDrawing(!isDrawing)}
+              onClick={toggleDrawing}
               variant="default"
               size="lg"
               disabled={availableNumbers.length === 0}

@@ -12,9 +12,16 @@ interface YouTubePlayerProps {
   start?: number;
   end?: number;
   onEnd: () => void;
+  size?: 'normal' | 'large';
 }
 
-const YouTubePlayer: React.FC<YouTubePlayerProps> = ({ videoId, start, end, onEnd }) => {
+const YouTubePlayer: React.FC<YouTubePlayerProps> = ({
+  videoId,
+  start,
+  end,
+  onEnd,
+  size = 'normal',
+}) => {
   const playerRef = useRef<any>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const isLoadingRef = useRef(false);
@@ -54,7 +61,6 @@ const YouTubePlayer: React.FC<YouTubePlayerProps> = ({ videoId, start, end, onEn
   const initializePlayer = () => {
     if (!containerRef.current) return;
 
-    // Ensure any existing player is destroyed before creating a new one
     destroyPlayer();
 
     try {
@@ -77,7 +83,6 @@ const YouTubePlayer: React.FC<YouTubePlayerProps> = ({ videoId, start, end, onEn
           },
           onStateChange: (event: any) => {
             if (event.data === window.YT.PlayerState.ENDED) {
-              // Call onEnd before destroying the player
               onEnd();
             }
           },
@@ -94,10 +99,22 @@ const YouTubePlayer: React.FC<YouTubePlayerProps> = ({ videoId, start, end, onEn
   };
 
   return (
-    <div style={{ position: 'relative', width: '100%', height: '100%' }}>
+    <div
+      style={{
+        position: 'relative',
+        width: '100%',
+        height: '100%',
+      }}
+    >
       <div
         ref={containerRef}
-        style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          width: '100%',
+          height: '100%',
+        }}
       />
     </div>
   );
