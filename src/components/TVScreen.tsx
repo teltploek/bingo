@@ -38,7 +38,7 @@ const TVScreen: React.FC<TVProps> = ({
   });
 
   // Determine height based on size prop
-  const heightClass = size === 'large' ? 'h-[640px]' : 'h-[320px]';
+  const heightClass = size === 'large' ? 'h-[1080px]' : 'h-[480px]';
 
   useEffect(() => {
     setIsOn(isPlaying);
