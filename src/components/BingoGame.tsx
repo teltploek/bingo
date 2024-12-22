@@ -154,8 +154,7 @@ const BingoGame = () => {
 
     // Draw the number
     const randomIndex = Math.floor(Math.random() * availableNumbers.length);
-    // const drawn = availableNumbers[randomIndex];
-    const drawn = 14;
+    const drawn = availableNumbers[randomIndex];
     const mediaForNumber = mediaMapping[drawn];
 
     console.log(`Drawing number ${drawn}. Available numbers: ${availableNumbers.length}`);
