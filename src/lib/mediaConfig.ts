@@ -192,10 +192,11 @@ export const mediaMapping: Record<number, MediaConfig> = {
     end: 722,
   },
   26: {
-    type: 'video',
-    url: '/media/videos/6.mp4',
-    start: 238,
-    end: 250,
+    type: 'youtube',
+    youtubeId: 'WEMh_v8uDkQ',
+    url: '',
+    start: 1964,
+    end: 1978,
   },
   27: {
     type: 'youtube',
