@@ -47,6 +47,12 @@ export const pauseVideos: PauseVideo[] = [
 export const introVideos: IntroVideo[] = [
   {
     youtubeId: '_hFCf0iw4iQ',
+    start: 2,
+    end: 4,
+    description: 'Kanal O TV-Bingo Show',
+  },
+  /* {
+    youtubeId: '_hFCf0iw4iQ',
     start: 13,
     end: 160,
     description: 'Kanal O TV-Bingo Show',
@@ -68,7 +74,7 @@ export const introVideos: IntroVideo[] = [
     start: 13,
     end: 196,
     description: 'Kanal O TV-Bingo Show',
-  },
+  }, */
 ];
 
 export const mediaMapping: Record<number, MediaConfig> = {
@@ -271,8 +277,8 @@ export const mediaMapping: Record<number, MediaConfig> = {
     type: 'youtube',
     youtubeId: 'agkCInzJciQ',
     url: '',
-    start: 531,
-    end: 541,
+    start: 521,
+    end: 531,
   },
   29: {
     type: 'video',
@@ -388,7 +394,7 @@ export const mediaMapping: Record<number, MediaConfig> = {
     type: 'youtube',
     youtubeId: '3_tgVpiWpxI',
     url: '',
-    start: 747,
+    start: 746,
     end: 753,
   },
   46: {
