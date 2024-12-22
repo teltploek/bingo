@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useSpring, animated } from '@react-spring/web';
 import YouTubePlayer from './YouTubePlayer';
+import { Button } from '@/components/ui/button';
 
 interface TVProps {
   mediaUrl: string;
@@ -10,7 +11,10 @@ interface TVProps {
   youtubeId?: string;
   onMediaEnd: () => void;
   isPlaying: boolean;
-  size?: 'normal' | 'large'; // New size prop
+  size?: 'normal' | 'large';
+  isIntro?: boolean;
+  isPause?: boolean;
+  onSkip?: () => void;
 }
 
 const TVScreen: React.FC<TVProps> = ({
@@ -21,7 +25,10 @@ const TVScreen: React.FC<TVProps> = ({
   youtubeId,
   onMediaEnd,
   isPlaying,
-  size = 'normal', // Default to normal size
+  size = 'normal',
+  isIntro = false,
+  isPause = false,
+  onSkip,
 }) => {
   const [isOn, setIsOn] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -37,7 +44,6 @@ const TVScreen: React.FC<TVProps> = ({
     },
   });
 
-  // Determine height based on size prop
   const heightClass = size === 'large' ? 'h-[1080px]' : 'h-[480px]';
 
   useEffect(() => {
@@ -86,7 +92,7 @@ const TVScreen: React.FC<TVProps> = ({
             start={videoStart}
             end={videoEnd}
             onEnd={onMediaEnd}
-            size={size} // Pass size to YouTubePlayer
+            size={size}
           />
         ) : null;
       case 'video':
@@ -112,6 +118,31 @@ const TVScreen: React.FC<TVProps> = ({
     >
       <div className="relative w-full h-full bg-[#333] p-4 rounded-lg">
         <div className="relative w-full h-full bg-black rounded overflow-hidden">
+          {/* Intro Text */}
+          {isIntro && (
+            <div className="absolute top-8 left-0 right-0 z-10 text-center">
+              <div className="inline-block bg-black bg-opacity-80 px-8 py-4 rounded-lg">
+                <span className="text-white text-2xl font-bold tracking-wide">
+                  Spillet starter lige efter denne intro
+                </span>
+              </div>
+            </div>
+          )}
+
+          {/* Skip Button - shown for both intro and pause */}
+          {(isIntro || isPause) && onSkip && (
+            <div className="absolute bottom-8 right-8 z-10">
+              <Button
+                onClick={onSkip}
+                variant="outline"
+                size="lg"
+                className="bg-white hover:bg-gray-100 text-black border-2 border-white text-lg font-semibold px-8 py-6 h-auto"
+              >
+                {isIntro ? 'Spring intro over' : 'Fortsæt spillet'}
+              </Button>
+            </div>
+          )}
+
           <div className="absolute inset-0 pointer-events-none">
             <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black opacity-20" />
           </div>

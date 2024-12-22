@@ -1,7 +1,6 @@
 import React from 'react';
 
 const CircusLights = () => {
-  // Array of festive colors
   const colors = [
     '#FF5252', // Red
     '#40A2E3', // Blue
@@ -15,13 +14,16 @@ const CircusLights = () => {
     '#32CD32', // Lime Green
   ];
 
-  // Create lights positioned in a circle
-  const numberOfLights = 20; // Increased number of lights
-  const radius = 140; // Adjusted to fit around the logo
+  const numberOfLights = 20;
+  const radius = 140;
+
+  // Helper function to round numbers to fixed precision
+  const round = (num: number) => Number(num.toFixed(2));
+
   const lights = Array.from({ length: numberOfLights }, (_, index) => {
     const angle = (index / numberOfLights) * 2 * Math.PI;
-    const x = radius * Math.cos(angle);
-    const y = radius * Math.sin(angle);
+    const x = round(radius * Math.cos(angle));
+    const y = round(radius * Math.sin(angle));
     const color = colors[index % colors.length];
 
     return (
@@ -34,7 +36,8 @@ const CircusLights = () => {
           className="animate-pulse"
           style={{
             filter: 'url(#glow)',
-            animation: `pulseOuter ${2 + index * 0.1}s infinite`,
+            animationDuration: `${2 + (index % 2)}s`,
+            animationDelay: `${index * 0.2}s`,
           }}
         />
         {/* Inner glow */}
@@ -45,8 +48,8 @@ const CircusLights = () => {
           className="animate-pulse"
           style={{
             filter: 'url(#glow)',
-            animation: `pulseInner ${2 + index * 0.1}s infinite`,
-            animationDelay: `${index * 0.1}s`,
+            animationDuration: `${2 + (index % 2)}s`,
+            animationDelay: `${index * 0.2}s`,
           }}
         />
         {/* Main light bulb */}
@@ -55,9 +58,8 @@ const CircusLights = () => {
           fill={color}
           className="animate-pulse"
           style={{
-            animation: `pulseBulb ${2 + index * 0.1}s infinite`,
-            animationDelay: `${index * 0.1}s`,
-            transformOrigin: 'center',
+            animationDuration: `${2 + (index % 2)}s`,
+            animationDelay: `${index * 0.2}s`,
           }}
         />
       </g>

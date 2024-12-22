@@ -18,6 +18,7 @@ import NumberBall from './NumberSphere';
 import TVScreen from './TVScreen';
 import CircusLights from './CircusLights';
 import SideDecorations from './SideDecorations';
+import { useRouter } from 'next/navigation';
 
 const Snowfall = dynamic(() => import('react-snowfall'), { ssr: false });
 
@@ -110,6 +111,7 @@ const getGridGradientForNumber = (num: number): { from: string; to: string } => 
 };
 
 const BingoGame = () => {
+  const router = useRouter();
   const [drawnNumbers, setDrawnNumbers] = useState<number[]>([]);
   const [currentNumber, setCurrentNumber] = useState<number | null>(null);
   const [isDrawing, setIsDrawing] = useState(false);
@@ -121,6 +123,8 @@ const BingoGame = () => {
   const [isFreshGame, setIsFreshGame] = useState(true);
   const [showPauseVideo, setShowPauseVideo] = useState(false);
   const [selectedPauseVideo, setSelectedPauseVideo] = useState<PauseVideo | null>(null);
+  const [usedPauseVideoIndices, setUsedPauseVideoIndices] = useState<number[]>([]);
+
   const [isSoundEnabled, setIsSoundEnabled] = useState(false);
 
   // Derive available numbers from drawn numbers
@@ -140,16 +144,43 @@ const BingoGame = () => {
   }, [currentTheme]);
 
   const initializeGame = useCallback(() => {
-    console.log('Initializing new game');
+    // console.log('Initializing new game');
     setDrawnNumbers([]);
     setCurrentNumber(null);
     setIsDrawing(false);
     setShowMediaOverlay(false);
     setCurrentMedia(null);
-    setIsFreshGame(true); // Set to true when initializing a new game
-    setShowIntroVideo(false); // Reset intro video state
+    setIsFreshGame(true);
+    setShowIntroVideo(false);
     setSelectedIntroVideo(null);
+    // Reset the used pause videos when starting a new game
+    setUsedPauseVideoIndices([]);
   }, []);
+
+  const selectPauseVideo = useCallback(() => {
+    // Get available indices (ones that haven't been used)
+    const availableIndices = Array.from({ length: pauseVideos.length }, (_, i) => i).filter(
+      (index) => !usedPauseVideoIndices.includes(index),
+    );
+
+    // If all videos have been used, reset the pool
+    if (availableIndices.length === 0) {
+      const randomIndex = Math.floor(Math.random() * pauseVideos.length);
+      setUsedPauseVideoIndices([randomIndex]);
+      return pauseVideos[randomIndex];
+    }
+
+    // Select a random video from the available ones
+    const randomAvailableIndex = Math.floor(Math.random() * availableIndices.length);
+    const selectedIndex = availableIndices[randomAvailableIndex];
+
+    setUsedPauseVideoIndices((prev) => [...prev, selectedIndex]);
+    return pauseVideos[selectedIndex];
+  }, [usedPauseVideoIndices]);
+
+  const handleInstructionsClick = () => {
+    router.push('/instructions');
+  };
 
   const toggleDrawing = useCallback(() => {
     if (isFreshGame) {
@@ -160,15 +191,15 @@ const BingoGame = () => {
       setIsFreshGame(false);
     } else if (isDrawing) {
       // If we're currently drawing (i.e., pausing the game)
-      const randomPauseVideo = pauseVideos[Math.floor(Math.random() * pauseVideos.length)];
-      setSelectedPauseVideo(randomPauseVideo);
+      const nextPauseVideo = selectPauseVideo();
+      setSelectedPauseVideo(nextPauseVideo);
       setShowPauseVideo(true);
       setIsDrawing(false);
     } else {
       // If we're resuming after a pause
       setIsDrawing(true);
     }
-  }, [isFreshGame, isDrawing]);
+  }, [isFreshGame, isDrawing, selectPauseVideo]);
 
   const handleIntroVideoEnd = useCallback(() => {
     setShowIntroVideo(false);
@@ -177,32 +208,31 @@ const BingoGame = () => {
   }, []);
 
   const handlePauseVideoEnd = useCallback(() => {
-    console.log('Pause video ended');
+    // console.log('Pause video ended');
     setShowPauseVideo(false);
     setSelectedPauseVideo(null);
-    // Do not set isDrawing here - let the toggleDrawing function handle that
   }, []);
 
   const drawNumber = useCallback(() => {
     // Check if we can draw
 
     if (showIntroVideo) {
-      console.log('Intro video is playing, cannot draw');
+      // console.log('Intro video is playing, cannot draw');
       return;
     }
 
     if (availableNumbers.length === 0) {
-      console.log('No available numbers to draw');
+      // console.log('No available numbers to draw');
       return;
     }
 
     if (showMediaOverlay) {
-      console.log('Media overlay is showing, cannot draw');
+      // console.log('Media overlay is showing, cannot draw');
       return;
     }
 
     if (currentMedia) {
-      console.log('Current media exists, cannot draw');
+      // console.log('Current media exists, cannot draw');
       return;
     }
 
@@ -211,7 +241,7 @@ const BingoGame = () => {
     const drawn = availableNumbers[randomIndex];
     const mediaForNumber = mediaMapping[drawn];
 
-    console.log(`Drawing number ${drawn}. Available numbers: ${availableNumbers.length}`);
+    // console.log(`Drawing number ${drawn}. Available numbers: ${availableNumbers.length}`);
 
     if (mediaForNumber) {
       setCurrentNumber(drawn);
@@ -224,10 +254,10 @@ const BingoGame = () => {
     if (currentNumber !== null) {
       setDrawnNumbers((prev) => {
         if (!prev.includes(currentNumber)) {
-          console.log(`Adding ${currentNumber} to drawn numbers list`);
+          // console.log(`Adding ${currentNumber} to drawn numbers list`);
           return [...prev, currentNumber];
         }
-        console.log(`Number ${currentNumber} already in drawn numbers list`);
+        // console.log(`Number ${currentNumber} already in drawn numbers list`);
         return prev;
       });
     }
@@ -240,9 +270,9 @@ const BingoGame = () => {
 
     const scheduleNextDraw = () => {
       if (isDrawing && availableNumbers.length > 0 && !showMediaOverlay && !currentMedia) {
-        console.log('Scheduling next draw...');
+        // console.log('Scheduling next draw...');
         drawTimeoutId = setTimeout(() => {
-          console.log('Executing scheduled draw');
+          // console.log('Executing scheduled draw');
           drawNumber();
         }, 500);
       }
@@ -252,7 +282,7 @@ const BingoGame = () => {
 
     return () => {
       if (drawTimeoutId) {
-        console.log('Cleaning up draw timeout');
+        // console.log('Cleaning up draw timeout');
         clearTimeout(drawTimeoutId);
       }
     };
@@ -311,8 +341,48 @@ const BingoGame = () => {
     );
   };
 
+  const isGameActive = showIntroVideo || showPauseVideo || isDrawing;
+
   return (
     <>
+      <div
+        className={`
+          fixed top-6 right-6 z-[100] flex gap-4
+          transition-all duration-500 ease-in-out
+          ${isGameActive ? 'opacity-0 invisible' : 'opacity-100 visible'}
+        `}
+      >
+        <Button
+          onClick={handleInstructionsClick}
+          variant="outline"
+          size="lg"
+          className={`
+            ${
+              currentTheme === 'christmas'
+                ? 'border-[#f4f0ec] text-[#f4f0ec] bg-[#034a21] hover:bg-[#c41e3a] hover:text-[#f4f0ec]'
+                : 'bg-white hover:bg-gray-100'
+            }
+          `}
+        >
+          Sådan fungerer spillet
+        </Button>
+
+        <Button
+          onClick={() => window.open('/print', '_blank')}
+          variant="outline"
+          size="lg"
+          className={`
+            ${
+              currentTheme === 'christmas'
+                ? 'border-[#f4f0ec] text-[#f4f0ec] bg-[#034a21] hover:bg-[#c41e3a] hover:text-[#f4f0ec]'
+                : 'bg-white hover:bg-gray-100'
+            }
+          `}
+        >
+          Print plader
+        </Button>
+      </div>
+
       {(showIntroVideo || showPauseVideo) && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75">
           <div className="w-full max-w-6xl p-4">
@@ -327,6 +397,9 @@ const BingoGame = () => {
               onMediaEnd={showIntroVideo ? handleIntroVideoEnd : handlePauseVideoEnd}
               isPlaying={showIntroVideo || showPauseVideo}
               size="large"
+              isIntro={showIntroVideo}
+              isPause={showPauseVideo}
+              onSkip={showIntroVideo ? handleIntroVideoEnd : handlePauseVideoEnd}
             />
           </div>
         </div>
@@ -344,6 +417,7 @@ const BingoGame = () => {
           />
         )}
         <SideDecorations /> {/* This is where I added it */}
+        {/* Print Button - Moved outside container for testing */}
         {/* Video Overlays */}
         <div className="container mx-auto p-4 max-w-6xl relative z-10 mt-2">
           {/* Logo */}
@@ -446,7 +520,6 @@ const BingoGame = () => {
             />
           </div>
 
-          {/* Rest of the component remains unchanged */}
           <div className="flex flex-col gap-8 items-center mb-14">
             <div className="flex gap-4">
               <Button
@@ -455,12 +528,12 @@ const BingoGame = () => {
                 size="lg"
                 disabled={isDrawing}
                 className={`
-                ${
-                  currentTheme === 'christmas'
-                    ? 'border-[#f4f0ec] text-[#f4f0ec] bg-[#034a21] hover:bg-[#c41e3a] hover:text-[#f4f0ec] disabled:opacity-50 disabled:border-[#f4f0ec]/50 disabled:text-[#f4f0ec]/50'
-                    : ''
-                }
-              `}
+        ${
+          currentTheme === 'christmas'
+            ? 'border-[#f4f0ec] text-[#f4f0ec] bg-[#034a21] hover:bg-[#c41e3a] hover:text-[#f4f0ec] disabled:opacity-50 disabled:border-[#f4f0ec]/50 disabled:text-[#f4f0ec]/50'
+            : ''
+        }
+      `}
               >
                 Nyt spil
               </Button>
@@ -470,12 +543,12 @@ const BingoGame = () => {
                 size="lg"
                 disabled={availableNumbers.length === 0}
                 className={`
-                ${
-                  currentTheme === 'christmas'
-                    ? 'bg-[#c41e3a] text-[#f4f0ec] hover:bg-[#a01830] disabled:opacity-50'
-                    : ''
-                }
-              `}
+        ${
+          currentTheme === 'christmas'
+            ? 'bg-[#c41e3a] text-[#f4f0ec] hover:bg-[#a01830] disabled:opacity-50'
+            : ''
+        }
+      `}
               >
                 {isDrawing ? 'Bingo!' : 'Start!'}
               </Button>

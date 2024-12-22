@@ -51,7 +51,7 @@ export const introVideos: IntroVideo[] = [
     end: 4,
     description: 'Kanal O TV-Bingo Show',
   },
-  /* {
+  {
     youtubeId: '_hFCf0iw4iQ',
     start: 13,
     end: 160,
@@ -74,7 +74,7 @@ export const introVideos: IntroVideo[] = [
     start: 13,
     end: 196,
     description: 'Kanal O TV-Bingo Show',
-  }, */
+  },
 ];
 
 export const mediaMapping: Record<number, MediaConfig> = {

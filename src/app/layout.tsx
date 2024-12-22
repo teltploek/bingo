@@ -1,3 +1,5 @@
+// src/app/layout.tsx
+
 import type { Metadata } from 'next';
 import { GeistSans } from 'geist/font/sans';
 import { GeistMono } from 'geist/font/mono';
@@ -6,7 +8,6 @@ import { Analytics } from '@vercel/analytics/next';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import './globals.css';
 
-// Initialize Inter font with bold weight
 const christmasFont = Chewy({
   weight: ['400'],
   subsets: ['latin'],
@@ -16,6 +17,26 @@ const christmasFont = Chewy({
 export const metadata: Metadata = {
   title: 'BUSY julebingo',
   description: 'Julebingo 2024',
+  openGraph: {
+    type: 'website',
+    title: 'BUSY julebingo',
+    description: 'Julebingo 2024',
+    images: [
+      {
+        url: '/og-image.jpg', // You'll need to add this image to your public folder
+        width: 1200,
+        height: 630,
+        alt: 'BUSY julebingo',
+      },
+    ],
+    siteName: 'BUSY julebingo',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'BUSY julebingo',
+    description: 'Julebingo 2024',
+    images: ['/og-image.jpg'], // Same image as OG
+  },
 };
 
 export default function RootLayout({
