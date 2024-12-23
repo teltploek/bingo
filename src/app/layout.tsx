@@ -14,7 +14,10 @@ const christmasFont = Chewy({
   display: 'swap',
 });
 
+const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://jule.bingo';
+
 export const metadata: Metadata = {
+  metadataBase: new URL(baseUrl),
   title: 'BUSY julebingo',
   description: 'Julebingo 2024',
   openGraph: {
