@@ -47,12 +47,6 @@ export const pauseVideos: PauseVideo[] = [
 export const introVideos: IntroVideo[] = [
   {
     youtubeId: '_hFCf0iw4iQ',
-    start: 2,
-    end: 4,
-    description: 'Kanal O TV-Bingo Show',
-  },
-  {
-    youtubeId: '_hFCf0iw4iQ',
     start: 13,
     end: 160,
     description: 'Kanal O TV-Bingo Show',

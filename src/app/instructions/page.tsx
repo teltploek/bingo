@@ -83,6 +83,35 @@ export default function InstructionsPage() {
                 spil" knappen. Dette nulstiller alle trukne numre og starter et helt nyt spil.
               </p>
             </div>
+
+            <div>
+              <h2 className="text-xl font-semibold mb-2">Hvem står bag?</h2>
+              <p className="mb-2">
+                Dette bingospil er udviklet af BUSY, der siden 2007 har specialiseret sig i at skabe
+                succesfulde digitale løsninger for store virksomheder i Danmark. Med en bred palette
+                af kompetencer inden for forretningsudvikling, UX/UI-design og frontend-udvikling,
+                bygger BUSY bro mellem forretningsvision og teknisk implementering.
+              </p>
+              <p className="mb-2">
+                Ved at kombinere design og teknisk ekspertise hjælper BUSY virksomheder med at skabe
+                brugervenlige og effektive digitale løsninger, der understøtter deres
+                forretningsmål.
+              </p>
+              <p className="text-sm italic">
+                Og en gang imellem bliver der også tid til at lave et sjovt og totalt formålsløst
+                sideprojekt som dette.
+              </p>
+              <div className="mt-4">
+                <a
+                  href="https://busycph.dk"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[#c41e3a] hover:underline font-medium"
+                >
+                  Besøg BUSY's hjemmeside
+                </a>
+              </div>
+            </div>
           </CardContent>
         </Card>
       </div>

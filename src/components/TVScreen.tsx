@@ -44,7 +44,10 @@ const TVScreen: React.FC<TVProps> = ({
     },
   });
 
-  const heightClass = size === 'large' ? 'h-[1080px]' : 'h-[480px]';
+  const heightClass =
+    size === 'large'
+      ? 'h-[400px] md:h-[600px] lg:h-[800px] xl:h-[1080px]'
+      : 'h-[240px] md:h-[320px] lg:h-[400px] xl:h-[480px]';
 
   useEffect(() => {
     setIsOn(isPlaying);

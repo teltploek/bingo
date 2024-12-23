@@ -19,6 +19,7 @@ import TVScreen from './TVScreen';
 import CircusLights from './CircusLights';
 import SideDecorations from './SideDecorations';
 import { useRouter } from 'next/navigation';
+import Header from './Header';
 
 const Snowfall = dynamic(() => import('react-snowfall'), { ssr: false });
 
@@ -307,17 +308,18 @@ const BingoGame = () => {
               const isDrawn = drawnNumbers.includes(num);
               const colors = getGridGradientForNumber(num);
               const shouldHaveBottomBorder = num % 10 !== 0;
+
               return (
                 <div
                   key={num}
                   className={`
-                    p-2 text-center
-                    ${colIndex < 8 ? 'border-r border-white/20 border-opacity-20' : ''} 
-                    ${shouldHaveBottomBorder ? 'border-b border-white/20 border-opacity-20' : ''}
+                    py-1.5 px-0.5 md:p-2 text-center text-sm md:text-base lg:text-lg xl:text-xl
+                    ${colIndex < 8 ? 'border-r border-white/20' : ''} 
+                    ${shouldHaveBottomBorder ? 'border-b border-white/20' : ''}
                     transition-colors
                     ${
                       isDrawn
-                        ? `text-white font-bold`
+                        ? 'text-white font-bold'
                         : currentTheme === 'christmas'
                           ? activeTheme.undrawnNumber
                           : 'text-gray-700'
@@ -345,47 +347,15 @@ const BingoGame = () => {
 
   return (
     <>
-      <div
-        className={`
-          fixed top-6 right-6 z-[100] flex gap-4
-          transition-all duration-500 ease-in-out
-          ${isGameActive ? 'opacity-0 invisible' : 'opacity-100 visible'}
-        `}
-      >
-        <Button
-          onClick={handleInstructionsClick}
-          variant="outline"
-          size="lg"
-          className={`
-            ${
-              currentTheme === 'christmas'
-                ? 'border-[#f4f0ec] text-[#f4f0ec] bg-[#034a21] hover:bg-[#c41e3a] hover:text-[#f4f0ec]'
-                : 'bg-white hover:bg-gray-100'
-            }
-          `}
-        >
-          Sådan fungerer spillet
-        </Button>
-
-        <Button
-          onClick={() => window.open('/print', '_blank')}
-          variant="outline"
-          size="lg"
-          className={`
-            ${
-              currentTheme === 'christmas'
-                ? 'border-[#f4f0ec] text-[#f4f0ec] bg-[#034a21] hover:bg-[#c41e3a] hover:text-[#f4f0ec]'
-                : 'bg-white hover:bg-gray-100'
-            }
-          `}
-        >
-          Print plader
-        </Button>
-      </div>
+      <Header
+        onInstructionsClick={handleInstructionsClick}
+        currentTheme={currentTheme}
+        isGameActive={showIntroVideo || showPauseVideo || isDrawing}
+      />
 
       {(showIntroVideo || showPauseVideo) && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75">
-          <div className="w-full max-w-6xl p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75 p-2 md:p-4">
+          <div className="w-full max-w-6xl">
             <TVScreen
               mediaUrl=""
               mediaType="youtube"
@@ -419,9 +389,9 @@ const BingoGame = () => {
         <SideDecorations /> {/* This is where I added it */}
         {/* Print Button - Moved outside container for testing */}
         {/* Video Overlays */}
-        <div className="container mx-auto p-4 max-w-6xl relative z-10 mt-2">
+        <div className="container mx-auto p-2 md:p-4 max-w-6xl relative z-10 mt-1 md:mt-2">
           {/* Logo */}
-          <div className="flex justify-center mb-6 mt-4">
+          <div className="flex justify-center mb-3 md:mb-6 mt-2 md:mt-4">
             <div className="relative">
               <CircusLights />
               <svg
@@ -488,9 +458,9 @@ const BingoGame = () => {
           </div>
 
           {/* Updated Ball Display and TV Screen Grid */}
-          <div className="grid grid-cols-2 gap-8 mt-8 mb-20">
-            <div className=" text-center h-full flex flex-col justify-center items-center">
-              <div style={{ width: '200px', height: '200px' }}>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-8 mt-4 md:mt-8 mb-10 md:mb-20">
+            <div className="text-center h-full flex flex-col justify-center items-center order-2 lg:order-1">
+              <div className="w-[150px] h-[150px] md:w-[200px] md:h-[200px]">
                 <Canvas>
                   <ambientLight intensity={0.5} />
                   <directionalLight position={[5, 5, 5]} />
@@ -503,37 +473,37 @@ const BingoGame = () => {
                   />
                 </Canvas>
               </div>
-              <div className={`${activeTheme.textColor} mt-4`}>
+              <div className={`${activeTheme.textColor} mt-2 md:mt-4`}>
                 Antal udtrukne tal: {drawnNumbers.length} / 90
               </div>
             </div>
 
-            <TVScreen
-              mediaUrl={currentMedia?.url || ''}
-              mediaType={currentMedia?.type || 'video'}
-              videoStart={currentMedia?.start}
-              videoEnd={currentMedia?.end}
-              youtubeId={currentMedia?.youtubeId}
-              onMediaEnd={handleMediaEnd}
-              isPlaying={showMediaOverlay}
-              size="normal"
-            />
+            <div className="order-1 lg:order-2">
+              <TVScreen
+                mediaUrl={currentMedia?.url || ''}
+                mediaType={currentMedia?.type || 'video'}
+                videoStart={currentMedia?.start}
+                videoEnd={currentMedia?.end}
+                youtubeId={currentMedia?.youtubeId}
+                onMediaEnd={handleMediaEnd}
+                isPlaying={showMediaOverlay}
+                size="normal"
+              />
+            </div>
           </div>
 
-          <div className="flex flex-col gap-8 items-center mb-14">
-            <div className="flex gap-4">
+          <div className="flex flex-col gap-4 md:gap-8 items-center mb-8 md:mb-14">
+            <div className="flex gap-2 md:gap-4">
               <Button
                 onClick={initializeGame}
                 variant="outline"
                 size="lg"
                 disabled={isDrawing}
-                className={`
-        ${
-          currentTheme === 'christmas'
-            ? 'border-[#f4f0ec] text-[#f4f0ec] bg-[#034a21] hover:bg-[#c41e3a] hover:text-[#f4f0ec] disabled:opacity-50 disabled:border-[#f4f0ec]/50 disabled:text-[#f4f0ec]/50'
-            : ''
-        }
-      `}
+                className={`text-sm md:text-base ${
+                  currentTheme === 'christmas'
+                    ? 'border-[#f4f0ec] text-[#f4f0ec] bg-[#034a21] hover:bg-[#c41e3a] hover:text-[#f4f0ec] disabled:opacity-50 disabled:border-[#f4f0ec]/50 disabled:text-[#f4f0ec]/50'
+                    : ''
+                }`}
               >
                 Nyt spil
               </Button>
@@ -542,13 +512,11 @@ const BingoGame = () => {
                 variant="default"
                 size="lg"
                 disabled={availableNumbers.length === 0}
-                className={`
-        ${
-          currentTheme === 'christmas'
-            ? 'bg-[#c41e3a] text-[#f4f0ec] hover:bg-[#a01830] disabled:opacity-50'
-            : ''
-        }
-      `}
+                className={`text-sm md:text-base ${
+                  currentTheme === 'christmas'
+                    ? 'bg-[#c41e3a] text-[#f4f0ec] hover:bg-[#a01830] disabled:opacity-50'
+                    : ''
+                }`}
               >
                 {isDrawing ? 'Bingo!' : 'Start!'}
               </Button>
@@ -560,6 +528,21 @@ const BingoGame = () => {
           >
             <CardContent className={`p-0`}>{renderNumberGrid()}</CardContent>
           </Card>
+
+          <div className="text-center mt-4 mb-8">
+            <a
+              href="https://busycph.dk"
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`text-sm hover:underline ${
+                currentTheme === 'christmas'
+                  ? 'text-[#f4f0ec] hover:text-[#c41e3a]'
+                  : 'text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              Powered by BUSY
+            </a>
+          </div>
         </div>
       </div>
     </>
